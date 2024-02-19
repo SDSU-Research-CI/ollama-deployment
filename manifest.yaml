@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  labels:
+    k8s-app: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: ollama
+  template:
+    metadata:
+      labels:
+        k8s-app: ollama
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nautilus.io/csu-tide
+                operator: Exists
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-A100-80GB-PCIe
+      containers:
+      - name: pod-ollama
+        image: "ollama/ollama:0.1.24"
+        resources:
+          limits:
+            memory: 16Gi
+            cpu: 8
+            nvidia.com/gpu: 1
+          requests:
+            memory: 8Gi
+            cpu: 4
+            nvidia.com/gpu: 1
+        command: ["ollama", "serve"]
+        volumeMounts:
+        - name: pvc-ollama
+          mountPath: /root/.ollama
+      tolerations:
+      - effect: NoSchedule
+        key: nautilus.io/sdsu-fix
+        operator: Exists
+      - effect: NoSchedule
+        key: nautilus.io/csu-tide
+        operator: Exists
+      volumes:
+      - name: pvc-ollama
+        persistentVolumeClaim:
+          claimName: ollama
