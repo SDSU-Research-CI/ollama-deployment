@@ -30,12 +30,12 @@ spec:
         image: "ollama/ollama:0.1.24"
         resources:
           limits:
-            memory: 16Gi
-            cpu: 8
+            memory: 64Gi
+            cpu: 16
             nvidia.com/gpu: 1
           requests:
-            memory: 8Gi
-            cpu: 4
+            memory: 32Gi
+            cpu: 8
             nvidia.com/gpu: 1
         command: ["ollama", "serve"]
         volumeMounts:
