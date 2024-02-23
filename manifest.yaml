@@ -28,6 +28,8 @@ spec:
       containers:
       - name: pod-ollama
         image: "ollama/ollama:0.1.24"
+        ports:
+          - containerPort: 11434
         resources:
           limits:
             memory: 64Gi
@@ -52,3 +54,40 @@ spec:
       - name: pvc-ollama
         persistentVolumeClaim:
           claimName: ollama
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama-service
+spec:
+  selector:
+    k8s-app: ollama
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 11434
+  type: ClusterIP
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: haproxy
+    ingress.kubernetes.io/allowlist-source-range: "130.191.0.0/16, 146.244.0.0/16"
+  name: ollama-ingress
+spec:
+  rules:
+  - host: sdsu-aicenter-ollama.nrp-nautilus.io
+    http:
+      paths:
+      - backend:
+          service:
+            name: ollama-service
+            port:
+              number: 80
+        path: /
+        pathType: ImplementationSpecific
+  tls:
+  - hosts:
+    - sdsu-aicenter-ollama.nrp-nautilus.io
