@@ -25,24 +25,44 @@ spec:
                 operator: In
                 values:
                 - NVIDIA-A100-80GB-PCIe
+                - NVIDIA-L40
       containers:
       - name: pod-ollama
-        image: "ollama/ollama:0.1.24"
+        # image: "ollama/ollama:0.1.34"
+        image: "kkricksdsu/ollama:v1.1"
+        # command: ["ollama", "serve"]
+        command: ["bash", "-c", "systemctl daemon-reload && systemctl enable ollama && systemctl start ollama"]
         ports:
-          - containerPort: 11434
+        - containerPort: 11434
         resources:
           limits:
-            memory: 64Gi
-            cpu: 16
-            nvidia.com/gpu: 1
-          requests:
             memory: 32Gi
             cpu: 8
             nvidia.com/gpu: 1
-        command: ["ollama", "serve"]
+          requests:
+            memory: 16Gi
+            cpu: 4
+            nvidia.com/gpu: 1
         volumeMounts:
         - name: pvc-ollama
           mountPath: /root/.ollama
+      - name: ollama-proxy
+        image: "kkricksdsu/ollama-proxy:v1.0"
+        command: ["bash", "-c", "python3 ollama_proxy_server/main.py --config /etc/ollama/config/config.ini --users_list /etc/ollama/users/authorized_users.txt --port 8080"]
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: 2Gi
+            cpu: 2
+          requests:
+            memory: 1Gi
+            cpu: 1
+        volumeMounts:
+        - name: ollama-proxy-config
+          mountPath: /etc/ollama/config
+        - name: ollama-proxy-users
+          mountPath: /etc/ollama/users
       tolerations:
       - effect: NoSchedule
         key: nautilus.io/sdsu-fix
@@ -54,6 +74,14 @@ spec:
       - name: pvc-ollama
         persistentVolumeClaim:
           claimName: ollama
+      - name: ollama-proxy-config
+        secret:
+          secretName: ollama-proxy-config
+      - name: ollama-proxy-users
+        secret:
+          secretName: ollama-proxy-users
+
+---
 
 apiVersion: v1
 kind: Service
@@ -63,10 +91,17 @@ spec:
   selector:
     k8s-app: ollama
   ports:
-  - protocol: TCP
-    port: 80
+  - name: ollama
+    protocol: TCP
+    port: 11434
     targetPort: 11434
+  - name: ollama-proxy
+    protocol: TCP
+    port: 80
+    targetPort: 8080
+
   type: ClusterIP
+
 ---
 
 apiVersion: networking.k8s.io/v1
@@ -78,7 +113,7 @@ metadata:
   name: ollama-ingress
 spec:
   rules:
-  - host: sdsu-aicenter-ollama.nrp-nautilus.io
+  - host: sdsu-jsbaic-ollama.nrp-nautilus.io
     http:
       paths:
       - backend:
@@ -90,4 +125,4 @@ spec:
         pathType: ImplementationSpecific
   tls:
   - hosts:
-    - sdsu-aicenter-ollama.nrp-nautilus.io
+    - sdsu-jsbaic-ollama.nrp-nautilus.io

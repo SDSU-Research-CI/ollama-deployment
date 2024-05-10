@@ -3,9 +3,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: ollama
 spec:
-  storageClassName: linstor-sdsu
+  storageClassName: rook-cephfs-tide
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   resources:
     requests:
       storage: 250Gi
