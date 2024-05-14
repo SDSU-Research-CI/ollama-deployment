@@ -45,7 +45,7 @@ spec:
             nvidia.com/gpu: 1
         volumeMounts:
         - name: pvc-ollama
-          mountPath: /root/.ollama
+          mountPath: /usr/share/ollama/.ollama/
       - name: ollama-proxy
         image: "kkricksdsu/ollama-proxy:v1.0"
         command: ["bash", "-c", "python3 ollama_proxy_server/main.py --config /etc/ollama/config/config.ini --users_list /etc/ollama/users/authorized_users.txt --port 8080"]
