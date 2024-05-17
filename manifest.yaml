@@ -25,7 +25,6 @@ spec:
                 operator: In
                 values:
                 - NVIDIA-A100-80GB-PCIe
-                - NVIDIA-L40
       containers:
       - name: pod-ollama
         # image: "ollama/ollama:0.1.34"
@@ -36,13 +35,13 @@ spec:
         - containerPort: 11434
         resources:
           limits:
-            memory: 32Gi
-            cpu: 8
-            nvidia.com/gpu: 1
+            memory: 16Gi
+            cpu: 4
+            nvidia.com/a100: 1
           requests:
             memory: 16Gi
             cpu: 4
-            nvidia.com/gpu: 1
+            nvidia.com/a100: 1
         volumeMounts:
         - name: pvc-ollama
           mountPath: /usr/share/ollama/.ollama/
@@ -56,8 +55,8 @@ spec:
             memory: 2Gi
             cpu: 2
           requests:
-            memory: 1Gi
-            cpu: 1
+            memory: 2Gi
+            cpu: 2
         volumeMounts:
         - name: ollama-proxy-config
           mountPath: /etc/ollama/config
