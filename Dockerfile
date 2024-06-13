@@ -11,3 +11,9 @@ RUN echo "[Unit]\nDescription=Ollama Service\n\nAfter=network-online.target\n\n[
     > /etc/systemd/system/ollama.service
 
 RUN systemctl daemon-reload
+
+USER ollama
+
+ENV OLLAMA_KEEP_ALIVE=-1
+
+USER root
