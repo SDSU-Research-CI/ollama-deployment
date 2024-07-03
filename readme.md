@@ -7,7 +7,7 @@ This builds upon the [official Ollama Dockerfile](https://hub.docker.com/r/ollam
 ## Customizing the Deployment
 Before following the steps in these sub-sections, please clone this repo to your local computer:
 - Cloning over HTTPS: `git clone https://github.com/SDSU-Research-CI/ollama-deployment.git`
-- Cloning over SSH: `git@github.com:SDSU-Research-CI/ollama-deployment.git`
+- Cloning over SSH: `git clone git@github.com:SDSU-Research-CI/ollama-deployment.git`
 
 ### Updating the Container Image
 1. Open the Dockerfile
