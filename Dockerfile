@@ -1,9 +1,11 @@
-FROM ollama/ollama:0.1.48
+FROM ollama/ollama:0.3.10
 
 RUN apt-get update -y \
  && apt-get install -y \
     systemctl \
-    vim
+    vim \
+    wget \
+    curl
 
 RUN useradd -r -s /bin/false -m -d /usr/share/ollama ollama
 
