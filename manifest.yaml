@@ -27,7 +27,7 @@ spec:
                 - NVIDIA-A100-80GB-PCIe
       containers:
       - name: pod-ollama
-        image: ghcr.io/sdsu-research-ci/ollama@sha256:c64eaf9f0acf834b377fba5db290aa2e7007758e55c8e08fdaff16c4faaccf52
+        image: ghcr.io/sdsu-research-ci/ollama@sha256:1f6c3cca70535d6fe3250b99ec1082a00007394b5d6e5c4d0768dd7cf8ba3982
         command: ["bash", "-c", "systemctl daemon-reload && systemctl enable ollama && systemctl start ollama"]
         ports:
         - containerPort: 11434
