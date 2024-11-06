@@ -1,4 +1,4 @@
-FROM ollama/ollama:0.3.10
+FROM ollama/ollama:0.3.14
 
 RUN apt-get update -y \
  && apt-get install -y \
